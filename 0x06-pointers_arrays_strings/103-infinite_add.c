@@ -1,52 +1,38 @@
+#include <stdio.h>
 #include <string.h>
 
 /**
  * infinite_add - adds two numbers
- * @n1: the first number
- * @n2: the second number
- * @r: the buffer that the function will use to store the result
- * @size_r: the buffer size
- *
- * Return: pointer to the result if the result can be stored in r
- *         0, otherwise
+ * @n1: first number
+ * @n2: second number
+ * @r: buffer that the function will use to store the result
+ * @size_r: buffer size
+ * Return: pointer to the result, or 0 if it cannot be stored in r
  */
 char *infinite_add(char *n1, char *n2, char *r, int size_r)
 {
-	int i = strlen(n1) - 1;
-	int j = strlen(n2) - 1;
-	int k = 0;
-	int carry = 0;
-	int sum = 0;
+	int i, j, k, l, m, n, carry = 0;
 
-	/* Ensure the result can be stored in r */
-	if ((size_r <= i) || (size_r <= j) || (size_r <= i + 2) || (size_r <= j + 2))
+	for (i = 0; n1[i] != '\0'; i++)
+		;
+	for (j = 0; n2[j] != '\0'; j++)
+		;
+
+	l = (i > j) ? i : j;
+
+	if (size_r <= l + 1)
 		return (0);
 
-	/* Calculate sum and handle carry */
-	while ((i >= 0) || (j >= 0) || (carry != 0))
+	r[l + 1] = '\0';
+
+	for (k = 0; k <= l; k++)
 	{
-		sum = carry;
-		if (i >= 0)
-		{
-			sum += n1[i--] - '0'; /* Convert char to int */
-		}
-		if (j >= 0)
-		{
-			sum += n2[j--] - '0'; /* Convert char to int */
-		}
-		r[k++] = (sum % 10) + '0'; /* Convert int to char and store */
-		carry = sum / 10;
+		m = (i > 0) ? n1[--i] - '0' : 0;
+		n = (j > 0) ? n2[--j] - '0' : 0;
+
+		r[l - k] = (m + n + carry) % 10 + '0';
+		carry = (m + n + carry) / 10;
 	}
 
-	r[k] = '\0';
-
-	/* Reverse the string */
-	for (i = 0, j = k - 1; i < j; i++, j--)
-	{
-		char temp = r[i];
-		r[i] = r[j];
-		r[j] = temp;
-	}
-
-	return (r);
+	return ((r[0] == '0') ? r + 1 : r);
 }
