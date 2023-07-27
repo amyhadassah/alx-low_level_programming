@@ -1,4 +1,11 @@
 #include <stdio.h>
+/**
+ * print_buffer - prints a buffer in a specific format
+ * @b: the buffer to be printed
+ * @size: the size of the buffer
+ *
+ * Return: nothing
+ */
 
 void print_buffer(char *b, int size)
 {
