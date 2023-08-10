@@ -1,33 +1,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/**
- * is_digit - checks if a string s is a digit
- * @s: the string to check
- * Return: 1 if s is a digit, 0 otherwise
- */
 int is_digit(char *s)
 {
-	if (!*s)
-		return (0);
-	while (*s)
+	int i = 0;
+
+	if (s[0] == '+')  /* Allow numbers to optionally start with a '+' */
+		i = 1;
+
+	for (; s[i]; i++)
 	{
-		if (*s < '0' || *s > '9')
+		if (s[i] < '0' || s[i] > '9')
 			return (0);
-		s++;
 	}
 	return (1);
 }
 
-/**
- * main - multiplies two positive numbers
- * @argc: number of arguments
- * @argv: array of argument strings
- * Return: 0 if successful, 98 otherwise
- */
 int main(int argc, char *argv[])
 {
-	long num1, num2, product;
+	long num1, num2;
 
 	if (argc != 3)
 	{
@@ -43,9 +34,6 @@ int main(int argc, char *argv[])
 
 	num1 = atol(argv[1]);
 	num2 = atol(argv[2]);
-
-	product = num1 * num2;
-	printf("%ld\n", product);
-
+	printf("%ld\n", num1 * num2);
 	return (0);
 }
