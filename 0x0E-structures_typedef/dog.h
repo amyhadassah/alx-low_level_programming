@@ -14,7 +14,7 @@ typedef struct dog_s
 	char *name;
 	float age;
 	char *owner;
-} dog_t;
+} dog;
 
 #endif /* DOG_H */
 
