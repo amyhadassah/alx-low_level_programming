@@ -2,19 +2,19 @@
 #define DOG_H
 
 /**
- * struct dog_s - A new type struct dog
+ * struct dog - Describes a dog
  * @name: dog's name
  * @age: dog's age
  * @owner: dog's owner
- *
- * Description: A new type struct dog with the above elements.
  */
-typedef struct dog_s
-{
+typedef struct dog {
 	char *name;
 	float age;
 	char *owner;
 } dog;
+
+/* Function Prototype */
+void init_dog(struct dog *d, char *name, float age, char *owner);
 
 #endif /* DOG_H */
 
