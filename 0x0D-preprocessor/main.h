@@ -2,6 +2,7 @@
 #define MAIN_H
 
 #include "header.h"
+#include "pi_header.h"
 
 int _putchar(char c)
 
