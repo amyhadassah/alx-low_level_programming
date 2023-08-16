@@ -35,4 +35,4 @@ void print(char *str)
 	}
 	write(1, "\n", 1);
 }
-
+ 
