@@ -1,20 +1,18 @@
 section .data
-hello_message db "Hello, Holberton", 0xA
-hello_message_len equ $ - hello_message
+    hello_message db 'Hello, Holberton', 10, 0
+    hello_message_len equ $ - hello_message
 
 section .text
-global main
-extern printf
+    extern printf
+    global _start
 
-main:
-    ; set up the arguments for printf
-    mov rdi, hello_message      ; format string
-    xor rax, rax                ; 0 floating point registers used
-
-    ; call printf
+_start:
+    ; Prepare arguments for printf
+    mov rdi, hello_message    ; First argument - format string
     call printf
 
-    ; exit the program
-    xor rdi, rdi                ; exit status 0
-    ret
+    ; Exit the program using syscall
+    mov rax, 60               ; syscall: exit
+    xor rdi, rdi              ; status: 0
+    syscall
 
