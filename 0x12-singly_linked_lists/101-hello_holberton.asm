@@ -1,21 +1,20 @@
 section .data
-hello db "Hello, Holberton", 10 ; The string to print, followed by a newline (10 is ASCII for newline)
-hello_len equ $ - hello ; Compute the length of the string
+hello_message db "Hello, Holberton", 0xA
+hello_message_len equ $ - hello_message
 
 section .text
-extern printf ; Declare the external printf function
 global main
+extern printf
 
 main:
-; Prepare arguments for printf
-mov rdi, hello ; First argument for printf: format string
-; Call printf
-call printf
+    ; set up the arguments for printf
+    mov rdi, hello_message      ; format string
+    xor rax, rax                ; 0 floating point registers used
 
-; Return from main
-mov rax, 60 ; syscall: exit
-xor rdi, rdi ; exit status 0
-syscall
+    ; call printf
+    call printf
 
-ret
+    ; exit the program
+    xor rdi, rdi                ; exit status 0
+    ret
 
