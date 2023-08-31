@@ -18,7 +18,7 @@ int get_bit(unsigned long int n, unsigned int index)
 	/* Create a mask by shifting 1 to the specified index */
 	mask = 1UL << index;
 
-	/* Use bitwise AND to isolate the desired bit, then shift it to the least significant position */
+	/* Use bitwise AND to isolate the desired bit, then shift it */
 	return ((n & mask) >> index);
 }
 
