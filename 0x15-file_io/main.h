@@ -4,6 +4,7 @@
 #include <unistd.h> /* for ssize_t, read, write, close */
 #include <fcntl.h>  /* for open */
 #include <stdlib.h> /* for size_t */
+#include <stdio.h>
 
 int _putchar(char c);
 ssize_t read_textfile(const char *filename, size_t letters);
