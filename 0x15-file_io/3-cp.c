@@ -3,107 +3,102 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int open_files(char *file_from, char *file_to);
-ssize_t copy_content(int fd_from, int fd_to);
-void close_files(int fd_from, int fd_to);
+#define MAXSIZE 1024
+
+void handle_errors(int error_code, char *file_name, int fd);
+
+int open_file(char *filename, int flags, mode_t mode);
+void close_file(int fd);
 
 /**
- * main - Main function to copy content from one file to another
- * @argc: argument count
- * @argv: argument vector
- * Return: 0 on success, error code on failure
+ * main - Copies the content of one file to another.
+ * @argc: Number of arguments.
+ * @argv: Arguments vector.
+ * Return: 0 on success, or a specific error code on failure.
  */
 int main(int argc, char *argv[])
 {
-	int fd_from, fd_to;
+	int file_in, file_out;
+	ssize_t read_stat, write_stat;
+	char buffer[MAXSIZE];
 
 	if (argc != 3)
+		handle_errors(97, NULL, 0);
+
+	file_in = open_file(argv[1], O_RDONLY, 0);
+	file_out = open_file(argv[2], O_CREAT | O_TRUNC | O_WRONLY, 0664);
+
+	while ((read_stat = read(file_in, buffer, MAXSIZE)) > 0)
 	{
-		dprintf(STDERR_FILENO, "Usage: cp file_from file_to\n");
-		exit(97);
+		write_stat = write(file_out, buffer, read_stat);
+		if (write_stat != read_stat)
+			handle_errors(99, argv[2], 0);
 	}
 
-	fd_from = open_files(argv[1], argv[2]);
-	fd_to = fd_from % (1 << 16);
-	fd_from = fd_from / (1 << 16);
+	if (read_stat < 0)
+		handle_errors(98, argv[1], 0);
 
-	if (copy_content(fd_from, fd_to) == -1)
-		exit(98);
-
-	close_files(fd_from, fd_to);
+	close_file(file_in);
+	close_file(file_out);
 
 	return (0);
 }
 
 /**
- * open_files - Opens the source and destination files
- * @file_from: source file
- * @file_to: destination file
- * Return: Combined file descriptors or -1
+ * handle_errors - Prints error messages based on the error code and exits.
+ * @error_code: The error code.
+ * @file_name: The name of the file causing the error.
+ * @fd: The file descriptor causing the error.
  */
-int open_files(char *file_from, char *file_to)
+void handle_errors(int error_code, char *file_name, int fd)
 {
-	int fd_from, fd_to;
-
-	fd_from = open(file_from, O_RDONLY);
-	if (fd_from == -1)
+	switch (error_code)
 	{
-		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", file_from);
-		exit(98);
+		case 97:
+			dprintf(STDERR_FILENO, "Usage: cp file_from file_to\n");
+			break;
+		case 98:
+			dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", file_name);
+			break;
+		case 99:
+			dprintf(STDERR_FILENO, "Error: Can't write to %s\n", file_name);
+			break;
+		case 100:
+			dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd);
+			break;
+		default:
+			return;
 	}
-
-	fd_to = open(file_to, O_WRONLY | O_CREAT | O_TRUNC, 0664);
-	if (fd_to == -1)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't write to %s\n", file_to);
-		close(fd_from);
-		exit(99);
-	}
-
-	return (fd_from * (1 << 16) + fd_to);
+	exit(error_code);
 }
 
 /**
- * copy_content - Copies content from fd_from to fd_to
- * @fd_from: source file descriptor
- * @fd_to: destination file descriptor
- * Return: 0 on success or -1 on failure
+ * open_file - Opens a file and handles errors.
+ * @filename: Name of the file.
+ * @flags: Flags for opening the file.
+ * @mode: Mode for the file if it needs to be created.
+ * Return: File descriptor.
  */
-ssize_t copy_content(int fd_from, int fd_to)
+int open_file(char *filename, int flags, mode_t mode)
 {
-	ssize_t read_count, write_count;
-	char buffer[1024];
+	int fd = open(filename, flags, mode);
 
-	while ((read_count = read(fd_from, buffer, 1024)) > 0)
+	if (fd < 0)
 	{
-		write_count = write(fd_to, buffer, read_count);
-		if (write_count != read_count)
-		{
-			dprintf(STDERR_FILENO, "Error: Can't write to\n");
-			return (-1);
-		}
+		if (flags & O_RDONLY)
+			handle_errors(98, filename, 0);
+		else
+			handle_errors(99, filename, 0);
 	}
-
-	return (read_count);
+	return (fd);
 }
 
 /**
- * close_files - Closes the file descriptors
- * @fd_from: source file descriptor
- * @fd_to: destination file descriptor
+ * close_file - Closes a file and handles errors.
+ * @fd: File descriptor.
  */
-void close_files(int fd_from, int fd_to)
+void close_file(int fd)
 {
-	if (close(fd_from) == -1)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd_from);
-		exit(100);
-	}
-
-	if (close(fd_to) == -1)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd_to);
-		exit(100);
-	}
+	if (close(fd) < 0)
+		handle_errors(100, NULL, fd);
 }
-
