@@ -13,8 +13,8 @@ int create_file(const char *filename, char *text_content);
 int append_text_to_file(const char *filename, char *text_content);
 
 /* New function prototypes for ELF header program */
-void print_error(char *msg);
-void display_elf_header(Elf64_Ehdr *header);
+void print_error(const char *msg);
+void display_elf_header(void *header, int is_32bit);
 
 #endif /* MAIN_H */
 
