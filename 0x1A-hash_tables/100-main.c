@@ -8,6 +8,27 @@
  *
  * Return: Always EXIT_SUCCESS.
  */
+
+/* Function to delete a sorted hash table */
+void shash_table_delete(shash_table_t *ht) {
+    unsigned long int i;
+    shash_node_t *node;
+    shash_node_t *tmp;
+
+    for (i = 0; i < ht->size; i++) {
+        node = ht->array[i];
+        while (node) {
+            tmp = node;
+            node = node->next;
+            free(tmp->key);
+            free(tmp->value);
+            free(tmp);
+        }
+    }
+    free(ht->array);
+    free(ht);
+}
+
 int main(void)
 {
 	shash_table_t *ht;
